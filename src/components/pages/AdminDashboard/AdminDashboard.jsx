@@ -2,7 +2,6 @@ import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiPlus, FiMenu } from "react-icons/fi";
 import { useStore } from "../../../store/useStore"; 
-import { showToast } from "../../Toast";
 import Sidebar from "./Sidebar";
 
 // lazy loaded components for code splitting
@@ -16,7 +15,7 @@ const OrderDetailsModal = lazy(() => import("./OrderDetailsModal"));
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-    const { user, currency, exchangeRates, setCurrency, logoutUser } = useStore(); 
+    const { currency, exchangeRates, setCurrency, logoutUser } = useStore(); 
     
     // local states
     const [activeTab, setActiveTab] = useState("overview");
@@ -30,31 +29,21 @@ const AdminDashboard = () => {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [editId, setEditId] = useState(null);
 
-    // Mở rộng điều kiện kiểm tra: Chấp nhận tài khoản có role "admin" HOẶC email là "cabbage@gmail.com"
-    const isAdmin = user && (user.role === "admin" || user.email === "cabbage@gmail.com");
-
-    // check admin access
+    // ĐÃ XÓA BỎ HOÀN TOÀN ĐOẠN CHECK ADMIN/REDIRECT
     useEffect(() => {
-        if (!isAdmin) {
-            showToast({ message: "Access Denied! Admins only.", type: "danger" });
-            navigate("/", { replace: true });
-        } else {
-            const savedOrders = JSON.parse(localStorage.getItem("cabbage_orders")) || [];
-            const savedUsers = JSON.parse(localStorage.getItem("cabbage_users")) || [];
-            const savedCoupons = JSON.parse(localStorage.getItem("cabbage_coupons")) || [];
-            
-            // Đảo ngược mảng bằng cách tạo bản sao [...savedOrders] để không biến đổi dữ liệu gốc
-            setOrders([...savedOrders].reverse()); 
-            setUsers(savedUsers);
-            setCoupons(savedCoupons);
-        }
-    }, [isAdmin, navigate]);
-
-    if (!isAdmin) return null;
+        const savedOrders = JSON.parse(localStorage.getItem("cabbage_orders")) || [];
+        const savedUsers = JSON.parse(localStorage.getItem("cabbage_users")) || [];
+        const savedCoupons = JSON.parse(localStorage.getItem("cabbage_coupons")) || [];
+        
+        setOrders([...savedOrders].reverse()); 
+        setUsers(savedUsers);
+        setCoupons(savedCoupons);
+    }, []);
 
     // dynamic price formatter
     const formatPrice = (price) => {
-        const converted = price * (exchangeRates[currency] || 1);
+        const rate = exchangeRates?.[currency] || 1;
+        const converted = price * rate;
         if (currency === 'BDT') return `৳${converted.toFixed(0)}`;
         if (currency === 'EUR') return `€${converted.toFixed(2)}`;
         if (currency === 'INR') return `₹${converted.toFixed(0)}`;
