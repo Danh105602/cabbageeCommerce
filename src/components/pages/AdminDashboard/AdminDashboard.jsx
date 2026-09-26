@@ -16,7 +16,7 @@ const OrderDetailsModal = lazy(() => import("./OrderDetailsModal"));
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
-    const { user, currency, exchangeRates, setCurrency, logoutUser } = useStore();
+    const { user, currency, exchangeRates, setCurrency, logoutUser } = useStore(); 
     
     // local states
     const [activeTab, setActiveTab] = useState("overview");
@@ -30,27 +30,31 @@ const AdminDashboard = () => {
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
     const [editId, setEditId] = useState(null);
 
+    // Mở rộng điều kiện kiểm tra: Chấp nhận tài khoản có role "admin" HOẶC email là "cabbage@gmail.com"
+    const isAdmin = user && (user.role === "admin" || user.email === "cabbage@gmail.com");
+
     // check admin access
     useEffect(() => {
-        if (!user || user.email !== "cabbage@gmail.com") {
+        if (!isAdmin) {
             showToast({ message: "Access Denied! Admins only.", type: "danger" });
             navigate("/", { replace: true });
         } else {
             const savedOrders = JSON.parse(localStorage.getItem("cabbage_orders")) || [];
             const savedUsers = JSON.parse(localStorage.getItem("cabbage_users")) || [];
             const savedCoupons = JSON.parse(localStorage.getItem("cabbage_coupons")) || [];
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setOrders(savedOrders.reverse()); 
+            
+            // Đảo ngược mảng bằng cách tạo bản sao [...savedOrders] để không biến đổi dữ liệu gốc
+            setOrders([...savedOrders].reverse()); 
             setUsers(savedUsers);
             setCoupons(savedCoupons);
         }
-    }, [user, navigate]);
+    }, [isAdmin, navigate]);
 
-    if (!user || user.email !== "cabbage@gmail.com") return null;
+    if (!isAdmin) return null;
 
     // dynamic price formatter
     const formatPrice = (price) => {
-        const converted = price * exchangeRates[currency];
+        const converted = price * (exchangeRates[currency] || 1);
         if (currency === 'BDT') return `৳${converted.toFixed(0)}`;
         if (currency === 'EUR') return `€${converted.toFixed(2)}`;
         if (currency === 'INR') return `₹${converted.toFixed(0)}`;
