@@ -21,7 +21,7 @@ const Home = () => {
                 <title>Home | Cabbage eCommerce</title>
                 <meta 
                     name="description" 
-                    content="Welcome to our website. Discover our best deals, featured products, and top categories." 
+                    content="Welcome to Danh our website. Discover our best deals, featured products, and top categories." 
                 />
                 <meta 
                     name="keywords" 
