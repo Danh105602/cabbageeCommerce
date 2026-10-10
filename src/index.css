@@ -34,3 +34,11 @@
 .slick-dots li button::before {
   content: "" !important;
 }
+/* Ép khung chứa chính và các section đổi sang màu nền vàng nhạt */
+#root, 
+main, 
+section, 
+.slick-slide, 
+.slick-slider {
+  background-color: #fefae0 !important; /* Hoặc mã màu vàng nhạt bạn chọn */
+}
