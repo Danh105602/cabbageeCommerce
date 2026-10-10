@@ -123,7 +123,7 @@ const Login = () => {
                         )}
                         <div className={`mb-6 md:mb-8 ${authType === "forgot" ? "mt-4" : ""}`}>
                             <h3 className="text-2xl md:text-3xl font-black font-int text-[#232323] mb-2">
-                                {authType === "login" && "Sign In to Danh Account"}
+                                {authType === "login" && "Sign In to Your Account"}
                                 {authType === "register" && "Get Started Absolutely Free"}
                                 {authType === "forgot" && "Reset Your Password"}
                             </h3>
